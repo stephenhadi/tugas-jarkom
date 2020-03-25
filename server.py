@@ -1,6 +1,8 @@
 import socket
 import _thread
+import threading
 from listSoal import listSoal
+import json
 
 def listen():
     counter=0
@@ -17,6 +19,15 @@ def listen():
         playerAddr.append(addr)
 
 
+def recieve_data(conn):
+    counter=0
+    data = conn.recv(1024)
+    recieve = json.loads(data.decode())
+    print(recieve["jawaban"])
+
+
+
+
 global playerConn
 global playerAddr
 global msg
@@ -31,6 +42,19 @@ playerAddr=[]
 _thread.start_new_thread(listen,())
 msg = input("write 'begin' to start \n")
 listSoal = listSoal()
-listSoal.fetchSoal()
+arrOfSoal = listSoal.fetchSoal()
+thread = threading.Thread(target=recieve_data,args=(playerConn[0],))
+thread.start()
+for x in range(0,playerConn.__len__()):
+    break
+
+for x in range(0,arrOfSoal.__len__()):
+    soal = arrOfSoal[x].getSoal()
+    pilihan = arrOfSoal[x].getPilihan()
+    concate = soal + "\n".join(pilihan) +"\n"
+    for y in range(0,playerConn.__len__()):
+        playerConn[y].send(bytearray(concate,'utf-8'))
+    thread.join()
+    msg2 = input("write 'next' untuk ke soal selanjutnya")
 
 
