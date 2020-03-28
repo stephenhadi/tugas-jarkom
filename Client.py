@@ -3,6 +3,7 @@ import json
 from threading import Timer
 import _thread
 import random
+import time
 
 TCP_IP = '127.0.0.1'
 TCP_PORT = 5005
@@ -21,11 +22,13 @@ while True:
     t = Timer(20, _thread.interrupt_main)
     try:
         t.start()
-        jawaban = input("Ketik jawaban A,B,C,D  dalam 10 detik\n")
-        time = str(random.sample(range(1,10),1))[1:-1]  # chris ini ntr lo tentuin gimana cara itung timenya cuman kurang lebih gini
+        waktuAwal = time.time()
+        jawaban = input("Ketik jawaban A,B,C,D  dalam 20 detik\n")
+        waktuAkhir = time.time()
+        lamaJawab = waktuAkhir-waktuAwal
         result = {
             "jawaban": jawaban,
-            "time": int(time)
+            "time": int(lamaJawab)
         }
         result = json.dumps(result)
         s.send(bytearray(result, 'utf-8'))
@@ -35,6 +38,7 @@ while True:
     print("total skor: ", skor.decode(), "\n")
     t.cancel()
 skorAkhir = s.recv(BUFFER_SIZE)
-skorAkhir = skorAkhir.decode() # ini lo print skor akhir
+skorAkhir = skorAkhir.decode()
+print(skorAkhir)
 print("Break")
 
